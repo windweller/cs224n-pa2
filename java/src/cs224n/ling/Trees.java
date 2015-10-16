@@ -28,8 +28,8 @@ public class Trees {
 			if (cutIndex2 > 0 && (cutIndex2 < cutIndex || cutIndex == -1))
 				cutIndex = cutIndex2;
 			if (cutIndex > 0 && !tree.isLeaf()) {
-				transformedLabel = new String(transformedLabel.substring(0,
-						cutIndex));
+				transformedLabel = transformedLabel.substring(0,
+						cutIndex);
 			}
 			if (tree.isLeaf()) {
 				return new Tree<String>(transformedLabel);
