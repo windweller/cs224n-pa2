@@ -8,6 +8,7 @@ import cs224n.ling.Trees;
 import cs224n.util.*;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A CKY PCFG parser based on the pseudocode in Manning's slides and videos.
@@ -19,30 +20,37 @@ public class PCFGParser implements Parser {
 
     // Keeps the Viterbi (max) scores ("score" in the pseudocode). Each
     // RuleScore keeps a list of rules and their scores.
-    public RuleScores[][] scores;
+    public RuleScores[] scores;
 
     public void train(List<Tree<String>> trainTrees) {
         // Binarize trees so rules are at most binary.
-        List<Tree<String>> newTrees = new ArrayList<Tree<String>>();
-        for (Tree<String> trainTree : trainTrees) {
-            Tree<String> newTree = TreeAnnotations.annotateTree(trainTree);
-            newTrees.add(newTree);
+        for (int i = 0; i < trainTrees.size(); i++) {
+            Tree<String> trainTree = trainTrees.get(i);
+            trainTrees.set(i, TreeAnnotations.annotateTree(trainTree));
         }
         // Lexicon is the set of rules from X -> x (a terminal).
-        lexicon = new Lexicon(newTrees);
+        lexicon = new Lexicon(trainTrees);
         // Grammar is a set of rules from X -> Y or X -> Y Z (non-terminals).
-        grammar = new Grammar(newTrees);
+        grammar = new Grammar(trainTrees);
     }
 
     public Tree<String> getBestParse(List<String> sentence) {
         // Initialize 2D array of scores. +1 for the fencepost to incorporate
         // empties.
         numWords = sentence.size();
-        scores = new RuleScores[numWords + 1][numWords + 1];
+        scores = new RuleScores[(numWords + 2) * (numWords + 1) / 2];
 
         initScores(sentence);
         doSpans();
         return buildParseTree();
+    }
+
+    private int idx(int row, int col) {
+        int sum = 0;
+        for (int i =0 ; i < row; i++) {
+            sum += (numWords + 1) - (i );
+        }
+        return sum + col - row;
     }
 
     private void initScores(List<String> sentence) {
@@ -51,7 +59,7 @@ public class PCFGParser implements Parser {
 
         // Loop through all words in sentence to initialize the RuleScore.
         for (int wordIdx = 0; wordIdx < numWords; wordIdx++) {
-            // find word in lexicon and add it to cell
+            // Find word in lexicon and add it to cell.
             word = sentence.get(wordIdx);
             ruleScore = new RuleScores();
 
@@ -62,7 +70,7 @@ public class PCFGParser implements Parser {
                 TerminalRule rule = new TerminalRule(tag, word, probability);
                 ruleScore.addRule(rule);
             }
-            scores[wordIdx][wordIdx + 1] = ruleScore;
+            scores[idx(wordIdx, wordIdx + 1)] = ruleScore;
 
             // Handle unary rules.
             handleUnaries(ruleScore);
@@ -75,12 +83,12 @@ public class PCFGParser implements Parser {
             for (int begin = 0; begin <= numWords - span; begin++) {
                 int end = begin + span;
                 ruleScore = new RuleScores();
-                scores[begin][end] = ruleScore;
+                scores[idx(begin, end)] = ruleScore;
 
                 for (int split = begin + 1; split <= end - 1; split++) {
                     // Handle binary rules that end in ? -> L R.
-                    RuleScores leftScore = scores[begin][split];
-                    RuleScores rightScore = scores[split][end];
+                    RuleScores leftScore = scores[idx(begin, split)];
+                    RuleScores rightScore = scores[idx(split, end)];
 
                     // Go through all binary rules L -> ?.
                     for (Map.Entry<String, Rule> entry : leftScore.get()) {
@@ -99,7 +107,9 @@ public class PCFGParser implements Parser {
                             Rule rightRule = rightScore.getRule(rightTag);
 
                             // See if this one beats the current probability.
-                            double prob = binary.getScore() *leftRule.getProb() * rightRule.getProb(); // TODO logs
+                            double prob = binary.getScore() *
+                                          leftRule.getProb() *
+                                          rightRule.getProb();
                             if (ruleScore.containsRule(ruleParent)) {
                                 Rule existingRule = ruleScore.getRule(ruleParent);
                                 if (prob > existingRule.getProb()) {
@@ -129,9 +139,7 @@ public class PCFGParser implements Parser {
             added = false;
 
             // Get all rules that exist for this cell.
-            Set<Map.Entry<String, Rule>> entries =
-                new HashSet<Map.Entry<String, Rule>>(ruleScore.get());
-            for (Map.Entry<String, Rule> entry : entries) {
+            for (Map.Entry<String, Rule> entry : ruleScore.get()) {
                 // A -> B: ruleParent is A, rule is (A -> B).
                 String parent = entry.getKey();
                 Rule rule = entry.getValue();
@@ -140,7 +148,7 @@ public class PCFGParser implements Parser {
                 // have in the ruleScore.
                 for (UnaryRule unary : grammar.getUnaryRulesByChild(parent)) {
                     // Compute the new probability of applying this rule.
-                    double prob = unary.getScore() * rule.getProb(); // TODO add the logs of the probs?
+                    double prob = unary.getScore() * rule.getProb();
 
                     // See if it beats the current probability X -> ?.
                     String unaryRuleParent = unary.getParent();
@@ -167,8 +175,8 @@ public class PCFGParser implements Parser {
     }
 
     private Tree<String> buildParseTree() {
-        // STart from the root of tree.
-        Rule root = scores[0][numWords].getRule("ROOT");
+        // Start from the root of tree.
+        Rule root = scores[idx(0, numWords)].getRule("ROOT");
         Tree<String> rootTree = new Tree<String>("ROOT");
 
         // Create stack of things to process. Contains pairs of (rule, tree),
@@ -252,10 +260,10 @@ public class PCFGParser implements Parser {
     private class RuleScores {
         /** Mapping of a rule parent to a rule. e.g. if the rule is A => B X,
             we store key: A and value: Rule(A -> B X). */
-        Map<String, Rule> ruleScores;
+        ConcurrentHashMap<String, Rule> ruleScores;
 
         public RuleScores() {
-            ruleScores = new HashMap<String, Rule>();
+            ruleScores = new ConcurrentHashMap<String, Rule>();
         }
 
         public Set<Map.Entry<String, Rule>> get() {

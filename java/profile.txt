@@ -1,0 +1,74 @@
+Flat profile of 394.44 secs (24772 total ticks): main
+
+  Interpreted + native   Method
+  1.1%     2  +   281    java.io.UnixFileSystem.getBooleanAttributes0
+  0.1%    33  +     0    java.util.HashMap.resize
+  0.0%     0  +    11    java.io.FileInputStream.open
+  0.0%    10  +     0    cs224n.assignment.Grammar.tallyTree
+  0.0%     0  +     9    java.io.FileOutputStream.writeBytes
+  0.0%     7  +     0    java.util.HashSet.iterator
+  0.0%     7  +     0    cs224n.assignment.TreeAnnotations.binarizeTree
+  0.0%     0  +     6    java.io.FileInputStream.readBytes
+  0.0%     2  +     3    java.io.UnixFileSystem.list
+  0.0%     5  +     0    cs224n.assignment.PCFGParser$RuleScores.get
+  0.0%     5  +     0    java.util.HashMap.inflateTable
+  0.0%     5  +     0    cs224n.assignment.PCFGParser.train
+  0.0%     5  +     0    cs224n.assignment.TreeAnnotations.binarizeTreeHelper
+  0.0%     5  +     0    java.util.HashMap.put
+  0.0%     5  +     0    cs224n.assignment.PCFGParser.doSpans
+  0.0%     4  +     0    cs224n.assignment.PCFGParser.handleUnaries
+  0.0%     0  +     3    java.lang.Object.getClass
+  0.0%     3  +     0    java.security.AccessController.doPrivileged
+  0.0%     3  +     0    java.util.AbstractCollection.toArray
+  0.0%     3  +     0    cs224n.ling.Trees$EmptyNodeStripper.transformTree
+  0.0%     0  +     2    java.io.FileInputStream.available
+  0.0%     2  +     0    java.nio.HeapByteBuffer.<init>
+  0.0%     2  +     0    java.lang.String.toCharArray
+  0.0%     2  +     0    java.util.Arrays.copyOfRange
+  0.0%     2  +     0    java.util.HashMap.getEntry
+  1.9%   149  +   319    Total interpreted (including elided)
+
+     Compiled + native   Method
+ 49.9% 12334  +    22    cs224n.assignment.PCFGParser.doSpans
+ 19.0%  4688  +     9    cs224n.assignment.PCFGParser.handleUnaries
+ 10.7%  2639  +     0    cs224n.assignment.PCFGParser$RuleScores.containsRule
+  2.8%   679  +    25    java.util.HashMap.put
+  2.2%   557  +     0    java.util.HashMap$Entry.hashCode
+  1.2%   298  +     5    java.util.HashMap.resize
+  0.1%    33  +     1    cs224n.assignment.Grammar.tallyTree
+  0.1%    21  +     0    cs224n.ling.Tree.appendYield
+  0.1%    14  +     0    cs224n.assignment.TreeAnnotations.binarizeTreeHelper
+  0.0%    12  +     0    java.util.HashMap.transfer
+  0.0%    11  +     0    cs224n.util.CounterMap.incrementCount
+  0.0%     6  +     0    java.util.HashMap.newEntryIterator
+  0.0%     6  +     0    cs224n.ling.Tree.appendPreTerminalYield
+  0.0%     5  +     0    cs224n.ling.Trees$XOverXRemover.transformTree
+  0.0%     5  +     0    cs224n.assignment.Lexicon.<init>
+  0.0%     4  +     0    cs224n.ling.Trees$EmptyNodeStripper.transformTree
+  0.0%     2  +     1    cs224n.util.Counter.incrementCount
+  0.0%     3  +     0    cs224n.assignment.TreeAnnotations.binarizeTree
+  0.0%     1  +     1    java.util.HashMap.get
+  0.0%     2  +     0    cs224n.ling.Trees$FunctionNodeStripper.transformTree
+  0.0%     1  +     0    cs224n.assignment.Lexicon.isKnown
+  0.0%     1  +     0    cs224n.ling.Tree.isPreTerminal
+  0.0%     1  +     0    cs224n.ling.Trees$TreeReader.readWhiteSpace
+  0.0%     1  +     0    cs224n.ling.Trees$PennTreeReader.readTree
+  0.0%     1  +     0    java.util.HashMap.hash
+ 86.4% 21326  +    66    Total compiled (including elided)
+
+         Stub + native   Method
+ 10.9%     0  +  2688    java.lang.Object.hashCode
+  0.9%     0  +   218    java.lang.String.intern
+  0.0%     0  +     6    java.lang.System.arraycopy
+ 11.8%     0  +  2912    Total stub
+
+
+Global summary of 394.45 seconds:
+100.0% 36229             Received ticks
+ 31.6% 11453             Received GC ticks
+  0.4%   153             Compilation
+  0.0%     2             Other VM operations
+
+real    6m34.516s
+user    7m49.574s
+sys     0m14.900s
