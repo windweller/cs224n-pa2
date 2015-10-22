@@ -32,6 +32,10 @@ public class PCFGParser implements Parser {
         lexicon = new Lexicon(trainTrees);
         // Grammar is a set of rules from X -> Y or X -> Y Z (non-terminals).
         grammar = new Grammar(trainTrees);
+
+        /* We used these to get the number of rules and tags. */
+        //System.out.println("Num Rules: " + grammar.ruleSize());
+        //System.out.println("Num Tags: " + grammar.tagSize());
     }
 
     public Tree<String> getBestParse(List<String> sentence) {

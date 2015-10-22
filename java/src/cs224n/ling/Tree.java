@@ -69,7 +69,7 @@ public class Tree<L> {
     return yield;
   }
 
-  private static <L> void appendPreTerminalYield(Tree<L> tree, 
+  private static <L> void appendPreTerminalYield(Tree<L> tree,
                                                  List<L> yield) {
     if (tree.isPreTerminal()) {
       yield.add(tree.getLabel());
@@ -82,11 +82,11 @@ public class Tree<L> {
 
   /* Returns a list of the node values gotten by traversing in this
    * order: root, left subtree, right subtree */
-  public List<Tree<L>> getPreOrderTraversal() { 
+  public List<Tree<L>> getPreOrderTraversal() {
     ArrayList<Tree<L>> traversal = new ArrayList <Tree<L>>();
-    traversalHelper(this, traversal, true); 
-    return traversal; 
-  } 
+    traversalHelper(this, traversal, true);
+    return traversal;
+  }
 
   /* Returns a list of the node values gotten by traversing in this
    * order: left subtree, right subtree, root */
@@ -96,7 +96,7 @@ public class Tree<L> {
     return traversal;
   }
 
-  private static <L> void traversalHelper(Tree<L> tree, List<Tree<L>> traversal, 
+  private static <L> void traversalHelper(Tree<L> tree, List<Tree<L>> traversal,
                                           boolean preOrder) {
     if (preOrder)
       traversal.add(tree);
@@ -125,7 +125,53 @@ public class Tree<L> {
     }
   }
 
-    
+  // ====== custom method =======
+
+  public List<Tree<L>> siblings(Tree<L> root) {
+    Tree<L> parent = this.getParent(root);
+    //excluding itself
+    List<Tree<L>> children = new ArrayList<Tree<L>>();
+    if (parent != null) {
+      children = new ArrayList<Tree<L>>(parent.getChildren());
+      children.remove(this);
+    }
+
+    return children;
+  }
+
+
+  public boolean equals(Tree<L> another) {
+    return this.toString().equals(another.toString());
+  }
+
+  public Tree<L> getParent(Tree<L> root) {
+
+    Tree<L> result = null;
+
+    if (root.isLeaf()) {
+      return null;
+    }
+
+    List<Tree<L>> children = root.getChildren();
+    for (Tree<L> child: children) {
+      //how to quickly compare the equality of two nodes?
+      if (child.toString().equals(this.toString())) {
+        return root;
+      }
+    }
+
+    //not found
+    for (Tree<L> child: children) {
+      Tree<L> intermediate = getParent(child);
+      if (intermediate != null)
+        result = intermediate;
+    }
+
+    return result;
+  }
+
+  // ====== custom method ends =======
+
   public List<Tree<L>> toSubTreeList() {
     return getPreOrderTraversal();
   }
@@ -139,7 +185,7 @@ public class Tree<L> {
     return constituentList;
   }
 
-  private static <L> int toConstituentCollectionHelper(Tree<L> tree, int start, 
+  private static <L> int toConstituentCollectionHelper(Tree<L> tree, int start,
                                                        List<Constituent<L>> constituents) {
     if (tree.isLeaf() || tree.isPreTerminal())
       return 1;

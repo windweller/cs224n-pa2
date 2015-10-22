@@ -1,0 +1,10 @@
+We both contributed to this assignment and separately implemented our own
+PCFGParser. We then combined this at the end.
+
+Angela focused on optimizing the PCFGParser to reach the time and memory limit,
+and worked on horizontal and vertical markovizations.
+
+Allen (Aiming) focused on extra credit for annotation techniques such as unary
+split, tag split, and yield split.
+
+Both of us worked on the writeup.
